@@ -115,7 +115,16 @@ async def predict(file: UploadFile = File(...)):
 
         # --- inference ----------------------------------------------------
         start = time.time()
-        results = model(np.array(image), verbose=False)
+        # resize + speed optimization
+        image = image.resize((224, 224))
+
+        results = model(
+            np.array(image),
+            imgsz=224,  # smaller input
+            conf=0.25,
+            iou=0.45,
+            verbose=False
+        )
         elapsed = time.time() - start
         logger.info("Inference completed in %.3f s", elapsed)
 
